@@ -40,23 +40,41 @@ public class ReplyMessage extends RequestReplyMessageBase {
 
         // Create a new Bundle to handle the result.
         // TODO -- you fill in here.
+        Bundle bundle = new Bundle();
 
         // Set the Bundle to be the data in the message.
         // TODO -- you fill in here.
+        replyMessage.setData(bundle);
 
         // Put the URL to the image file into the Bundle
         // TODO -- you fill in here.
+        ReplyMessage.setImageURL(bundle, url);
 
         // Put the requestCode into the Bundle
         // TODO -- you fill in here.
+        ReplyMessage.setRequestCode(bundle, requestCode);
 
         // Set the result code to indicate whether the download
         // succeeded or failed.
         // TODO -- you fill in here.
+        int resultCode;
+        
+        if (pathToImageFile != null)
+        {
+        	resultCode = Activity.RESULT_OK;
+        	
+        	// Put the path to the image file into the Bundle
+        	// only if the download succeeded.
+        	// TODO -- you fill in here.
+        	ReplyMessage.setDirectoryPathname(bundle, pathToImageFile.toString());
+        }
+        else
+        {
+        	resultCode = Activity.RESULT_CANCELED;
+        }
 
-        // Put the path to the image file into the Bundle
-        // only if the download succeeded.
-        // TODO -- you fill in here.
+    	replyMessage.setResultCode(resultCode);
+       
 
         return replyMessage;
     }
