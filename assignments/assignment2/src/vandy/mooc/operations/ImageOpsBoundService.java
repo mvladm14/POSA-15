@@ -4,17 +4,14 @@ import vandy.mooc.activities.MainActivity;
 import vandy.mooc.services.DownloadImagesBoundService;
 import vandy.mooc.utils.RequestMessage;
 import vandy.mooc.utils.Utils;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import android.webkit.WebView.FindListener;
 
 /**
  * This class implements all the image-related operations using an
@@ -94,17 +91,13 @@ public class ImageOpsBoundService extends ImageOpsImpl {
             // that can download an image from the URL given by the
             // user.  
             // TODO - you fill in here.
-        	if (mActivity != null)
-        	{
-	        	Intent intent = DownloadImagesBoundService.makeIntent(mActivity.get());
-	
-	            Log.d(TAG, "calling bindService()");
-	
-	            // Bind to the Service associated with the Intent.
-	            // TODO -- you fill in here.
-	            mActivity.get().bindService(
-	            		intent, mServiceConnection, Activity.BIND_AUTO_CREATE);
-        	}
+            Intent intent = DownloadImagesBoundService.makeIntent(mActivity.get());
+            intent.setData(Uri.parse(mUrlEditText.get().getText().toString()));
+            Log.d(TAG, "calling bindService()");
+
+            // Bind to the Service associated with the Intent.
+            // TODO -- you fill in here
+            mActivity.get().bindService(intent,mServiceConnection,Context.BIND_AUTO_CREATE);
         }
     }
 
@@ -118,11 +111,10 @@ public class ImageOpsBoundService extends ImageOpsImpl {
             // Unbind from the Service.
             // TODO -- you fill in here.
             mActivity.get().unbindService(mServiceConnection);
-
             // Set this field to null to trigger a call to
             // bindService() next time bindService() is called.
             // TODO -- you fill in here.
-            mRequestMessengerRef = null;
+            mRequestMessengerRef= null;
         }
     }
 
@@ -148,15 +140,13 @@ public class ImageOpsBoundService extends ImageOpsImpl {
                      mReplyMessenger);
 
                 Log.d(TAG,
-                      "sending a request message to DownloadImagesBoundService for "
-                      + url.toString());
+                        "sending a request message to DownloadImagesBoundService for "
+                                + url.toString());
 
                 // Send the request Message to the DownloadService.
                 // TODO -- you fill in here.
-                //Messenger messenger = requestMessage.getMessenger();
-                Message msg = requestMessage.getMessage();
-                mRequestMessengerRef.send(msg);
-                
+                mRequestMessengerRef.send(requestMessage.getMessage());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
