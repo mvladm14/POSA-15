@@ -40,42 +40,30 @@ public class ReplyMessage extends RequestReplyMessageBase {
 
         // Create a new Bundle to handle the result.
         // TODO -- you fill in here.
-        Bundle bundle = new Bundle();
-
+        Bundle resultBundle = new Bundle();
         // Set the Bundle to be the data in the message.
         // TODO -- you fill in here.
-        replyMessage.setData(bundle);
-
+       replyMessage.setData(resultBundle);
         // Put the URL to the image file into the Bundle
         // TODO -- you fill in here.
-        ReplyMessage.setImageURL(bundle, url);
-
+        resultBundle.putString(IMAGE_URL, url.toString());
         // Put the requestCode into the Bundle
         // TODO -- you fill in here.
-        ReplyMessage.setRequestCode(bundle, requestCode);
-
+        resultBundle.putInt(REQUEST_CODE, requestCode);
         // Set the result code to indicate whether the download
         // succeeded or failed.
         // TODO -- you fill in here.
-        int resultCode;
-        
-        if (pathToImageFile != null)
-        {
-        	resultCode = Activity.RESULT_OK;
-        	
-        	// Put the path to the image file into the Bundle
-        	// only if the download succeeded.
-        	// TODO -- you fill in here.
-        	ReplyMessage.setDirectoryPathname(bundle, pathToImageFile.toString());
+        if ( pathToImageFile == null){
+            replyMessage.setResultCode( Activity.RESULT_CANCELED);
+        }else{
+            replyMessage.setResultCode(Activity.RESULT_OK);
         }
-        else
-        {
-        	resultCode = Activity.RESULT_CANCELED;
+        // Put the path to the image file into the Bundle
+        // only if the download succeeded.
+        // TODO -- you fill in here.
+        if ( replyMessage.getResultCode()==Activity.RESULT_OK) {
+            resultBundle.putString(IMAGE_PATHNAME, pathToImageFile.toString());
         }
-
-    	replyMessage.setResultCode(resultCode);
-       
-
         return replyMessage;
     }
 }

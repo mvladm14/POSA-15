@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Message;
 import android.os.Messenger;
 
+import java.sql.ResultSet;
+
 /**
  * A thin facade around an Android Message that defines the schema of
  * a request from the Activity to the Service.
@@ -41,28 +43,22 @@ public class RequestMessage extends RequestReplyMessageBase {
 
         // Store replyMessenger into the Message's replyTo field.
         // TODO -- you fill in here.
-        requestMessage.setMessenger(replyMessenger);
-
+        requestMessage.getMessage().replyTo = replyMessenger;
         // Create a new Bundle to handle the result.
         // TODO -- you fill in here.
-        Bundle bundle = new Bundle();
-
+        Bundle resultBundle = new Bundle();
         // Set the Bundle as the "data" for the Message.
         // TODO -- you fill in here.
-        requestMessage.setData(bundle);
-
+        requestMessage.setData(resultBundle);
         // Put the URL to the image file into the Bundle
         // TODO -- you fill in here.
-        RequestMessage.setImageURL(bundle, url);
-
+        resultBundle.putString(IMAGE_URL, url.toString());
         // Put the pathname to the directory into the Bundle
         // TODO -- you fill in here.
-        RequestMessage.setImagePathname(bundle, directoryPathname);
-
+        resultBundle.putString(DIRECTORY_PATHNAME,directoryPathname);
         // Put the request code into the Bundle
         // TODO -- you fill in here.
-        RequestMessage.setRequestCode(bundle, requestCode);
-
+        resultBundle.putInt(REQUEST_CODE,requestCode);
         // Return the message to the caller.
         return requestMessage;
     }

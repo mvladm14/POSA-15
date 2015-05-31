@@ -1,14 +1,13 @@
 package vandy.mooc.services;
 
 import java.lang.ref.WeakReference;
+import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import vandy.mooc.utils.ReplyMessage;
 import vandy.mooc.utils.RequestMessage;
 import vandy.mooc.utils.Utils;
-import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +35,7 @@ class RequestHandler extends Handler {
      * Reference to the ExecutorService that manages a pool of
      * threads.
      */
+
     private ExecutorService mExecutorService;
 
     /**
@@ -58,34 +58,26 @@ class RequestHandler extends Handler {
      * Messenger passed with the message.
      */
     public void handleMessage(Message message) {
-    	
-    	System.out.println("----- Received Message to RequestHandler! -----");
-    	
-    	
         // Convert the Message into a RequestMessage.
         final RequestMessage requestMessage =
             RequestMessage.makeRequestMessage(message);
 
         // Get the reply Messenger.
         // TODO -- you fill in here.
-        final Messenger replyToMessenger = requestMessage.getMessenger();
-
+       final  Messenger reply_msg = requestMessage.getMessenger();
         // Get the URL associated with the message data.
         // TODO -- you fill in here.
-        final Uri imageUrl = requestMessage.getImageURL();
-
+        final Uri url = requestMessage.getImageURL();
         // Get the directory pathname where the image will be stored.
-        // TODO -- you fill in here.
-        final String dirPathname = requestMessage.getImagePathname();
-
+        // TODO -- you fill in here
+        final String directory_path = requestMessage.getDirectoryPathname();
         // Get the requestCode for the operation that was invoked by
         // the Activity.
         // TODO -- you fill in here.
-        int reqCode = requestMessage.getRequestCode();
-
-        
+         final int req_code = requestMessage.getRequestCode();
         // A Runnable that downloads the image, stores it in a file,
         // and sends the path to the file back to the Activity.
+
         final Runnable downloadImageAndReply = 
             new Runnable() {
                 /**
@@ -95,31 +87,19 @@ class RequestHandler extends Handler {
                 public void run() {
                     // Download and store the requested image.
                     // TODO -- you fill in here.
-                	Context ctx = mService.get().getApplicationContext();
-                	Uri downloadedImageUri = Utils.downloadImage(
-                			ctx, imageUrl, dirPathname);
-
+                    Uri uri = Utils.downloadImage(mService.get(), url, directory_path);
                     // Send the path to the image file, url, and
                     // requestCode back to the Activity via the
                     // replyMessenger.
-                    // TODO -- you fill in here.
-                	if (downloadedImageUri != null)
-                	{
-                		sendPath(replyToMessenger, 
-                				downloadedImageUri, imageUrl, Activity.RESULT_OK);
-                	}
-                	else
-                	{
-                		sendPath(replyToMessenger, 
-                				downloadedImageUri, imageUrl, Activity.RESULT_CANCELED);
-                	}
+                    // TODO -- you fill in here
+                    sendPath(reply_msg,uri,url,req_code);
                 }
             };
 
         // Execute the downloadImageAndReply Runnable to download the
         // image and reply.
         // TODO -- you fill in here.
-            mExecutorService.execute(downloadImageAndReply);
+        mExecutorService.execute(downloadImageAndReply);
     }
 
     /**
@@ -133,11 +113,7 @@ class RequestHandler extends Handler {
         // Call the makeReplyMessage() factory method to create
         // Message.
         // TODO -- you fill in here.
-		ReplyMessage replyMsg = 
-				ReplyMessage.makeReplyMessage(
-						pathToImageFile, url, requestCode);
-    	
-
+        ReplyMessage reply_msg = ReplyMessage.makeReplyMessage(pathToImageFile,url,requestCode);
         try {
             Log.d(TAG,
                   "sending "
@@ -146,8 +122,7 @@ class RequestHandler extends Handler {
 
             // Send the replyMessage back to the Activity.
             // TODO -- you fill in here.
-            messenger.send(replyMsg.getMessage());
-            
+            messenger.send(reply_msg.getMessage());
         } catch (Exception e) {
             Log.e(getClass().getName(),
                   "Exception while sending reply message back to Activity.",
@@ -160,8 +135,8 @@ class RequestHandler extends Handler {
      */
     public void shutdown() {
         // Immediately shutdown the ExecutorService.
-        // TODO -- you fill in here.        
-    	mExecutorService.shutdown();
+        // TODO -- you fill in here.
+        mExecutorService.shutdown();
     }
 }
 
